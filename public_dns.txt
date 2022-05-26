@@ -1,0 +1,298 @@
+# ----
+# https://www.lifewire.com/free-and-public-dns-servers-2626062
+# ----
+
+#
+# Manual list of public DNS servers to add to the list.
+#
+
+# https://developers.google.com/speed/public-dns/
+google-public-dns-a.google.com,google
+google-public-dns-b.google.com,google
+
+# https://www.verisign.com/en_US/security-services/public-dns/index.xhtml
+recpubns1.nstld.net,google
+recpubns2.nstld.net,google
+
+# CenturyLink 
+resolver1.level3.net,centurylink
+resolver2.level3.net,centurylink
+resolver3.level3.net,centurylink
+resolver4.level3.net,centurylink
+
+# Quad9
+dns.quad9.net,quad9
+rpz-public-resolver1.rrdns.pch.net,quad9
+rpz-public-resolver2.rrdns.pch.net,quad9
+
+# DNS.WATCH
+resolver1.ihgip.net,dnswatch
+resolver2.ihgip.net,dnswatch
+
+# Comodo Secure DNS: https://www.comodo.com/secure-dns/
+# TODO: 8.26.56.8 - 8.20.247.20 ?
+ns1.recursive.dnsbycomodo.com,comodo
+ns2.recursive.dnsbycomodo.com,comodo
+
+# OpenDNS
+resolver1.opendns.com,cisco,opendns
+resolver2.opendns.com,cisco,opendns
+
+# GreenTeamNS
+# PTR doesn't look correct, ignoring.
+
+# SafeDNS
+dns1.safedns.com,safedns
+dns2.safedns.com,safedns
+
+# OpenNIC
+ns0.backplanedns.org,opennic
+ns1.backplanedns.org,opennic
+
+# SmartViper
+208.76.50.50,smartviper
+208.76.51.51,smartviper
+
+# Dyn (DNS): https://help.dyn.com/internet-guide-setup/
+resolver1.dyndnsinternetguide.com,dyn
+resolver2.dyndnsinternetguide.com,dyn
+
+# FreeDNS: https://freedns.zone/en/
+45.33.97.5,freedns
+37.235.1.177,freedns
+37.235.1.174,freedns
+172.104.49.100,freedns
+172.104.237.57,freedns
+ 
+# Cloudflare: https://1.1.1.1/
+one.one.one.one,cloudflare
+
+# Akamai: https://www.whois.com/whois/akadns.net
+a1-128.akadns.net,akamai
+a11-129.akadns.net,akamai
+a12-131.akadns.org,akamai
+a13-130.akadns.org,akamai
+a18-128.akadns.org,akamai
+a28-129.akadns.org,akamai
+a3-129.akadns.net,akamai
+a5-130.akadns.org,akamai
+a7-131.akadns.net,akamai
+a9-128.akadns.net,akamai
+
+# Azure
+ns1prod.arpa-201.azuredns-prd.org,azure
+ns2prod.arpa-201.azuredns-prd.org,azure
+ns1prod.arpa-201.azuredns-prd.info,azure
+ns2prod.arpa-201.azuredns-prd.info,azure
+ns3-201.azure-dns.org,azure
+
+
+# Fortinet
+# PTR fortinet-public-dns-52.fortinet.com
+208.91.112.52,fortinet
+# PRR fortinet-public-dns-53.fortinet.com
+208.91.112.53,fortinet
+
+# Amazon
+g-ns-131.awsdns-03.org,amazon
+g-ns-709.awsdns-03.org,amazon
+g-ns-1030.awsdns-03.org,amazon
+g-ns-1603.awsdns-03.org,amazon
+ns-1053.awsdns-03.org,amazon
+ns-1119.awsdns-11.org,amazon
+ec2-18-153-1-63.eu-central-1.compute.amazonaws.com,amazon
+
+# DigitalOcean
+ns1.digitalocean.com,digitalocean
+ns2.digitalocean.com,digitalocean
+ns3.digitalocean.com,digitalocean
+ns4.digitalocean.com,digitalocean
+
+# NameCheap
+dns1.registrar-servers.com,namecheap
+dns2.registrar-servers.com,namecheap
+dns3.registrar-servers.com,namecheap
+dns4.registrar-servers.com,namecheap
+dns5.registrar-servers.com,namecheap
+
+# Microsoft
+g2.msft.net,microsoft
+ns1.msft.net,microsoft
+ns2.msft.net,microsoft
+ns3.msft.net,microsoft
+ns4.msft.net,microsoft
+ns5.msft.net,microsoft
+
+# Apple
+a.gslb.aaplimg.com,apple
+b.gslb.aaplimg.com,apple
+
+# Nameservers for IP6.ARPA
+# https://tools.ietf.org/html/rfc5855
+A.IP6-SERVERS.ARPA,arpa
+B.IP6-SERVERS.ARPA,arpa
+C.IP6-SERVERS.ARPA,arpa
+D.IP6-SERVERS.ARPA,arpa
+E.IP6-SERVERS.ARPA,arpa
+F.IP6-SERVERS.ARPA,arpa
+
+# Linpro
+ns-foo.linpro.net,linpro
+ns-bar.linpro.net,linpro
+ns-zoo.linpro.net,linpro
+ns-bar.i.bitbit.net,linpro
+ns-zoo.i.bitbit.net,linpro
+ns-foo.i.bitbit.net,linpro
+
+# Mailshell
+#dnsbl7.mailshell.net
+#lbl7.mailshell.net
+#lbl8.sn12.mailshell.net
+#rules.mailshell.net
+#lbl8.mailshell.net
+
+# Clearswift SECURE Email Gateway v4.9
+173.255.254.232,clearswift
+198.58.97.43,clearswift
+88.80.184.106,clearswift
+139.162.166.52,clearswift
+209.157.64.166,clearswift
+74.208.79.224,clearswift
+74.208.99.25,clearswift
+74.208.79.219,clearswift
+87.106.214.177,clearswift
+87.106.240.160,clearswift
+176.58.99.196,clearswift
+176.58.99.197,clearswift
+178.79.190.135,clearswift
+178.79.163.250,clearswift
+178.79.164.196,clearswift
+176.58.117.5,clearswift
+178.79.190.174,clearswift
+178.79.138.31,clearswift
+176.58.111.163,clearswift
+178.79.152.167,clearswift
+176.58.112.160,clearswift
+176.58.115.138,clearswift
+50.116.50.102,clearswift
+50.116.50.105,clearswift
+50.116.50.109,clearswift
+173.255.234.85,clearswift
+50.116.2.121,clearswift
+173.255.243.160,clearswift
+198.74.57.188,clearswift
+74.207.240.108,clearswift
+50.116.63.215,clearswift
+50.116.63.216,clearswift
+50.116.62.242,clearswift
+50.116.61.111,clearswift
+50.116.14.27,clearswift
+173.255.245.232,clearswift
+192.155.84.126,clearswift
+66.175.223.13,clearswift
+50.116.11.250,clearswift
+176.58.119.151,clearswift
+176.58.101.140,clearswift
+85.159.211.160,clearswift
+178.79.143.222,clearswift
+178.79.183.81,clearswift
+50.116.50.197,clearswift
+50.116.50.202,clearswift
+66.175.214.89,clearswift
+173.255.218.51,clearswift
+192.155.87.170,clearswift
+192.81.134.251,clearswift
+176.58.111.122,clearswift
+176.58.111.124,clearswift
+176.58.115.39,clearswift
+178.79.128.94,clearswift
+178.79.150.32,clearswift
+
+# Old root-servers.net
+# https://www.dummies.com/programming/networking/network-administration-root-servers/
+128.8.10.90,nsroot,old
+128.63.2.53,nsroot,old
+
+# ftp://ftp.wayne.edu/ldp/en/DNS-HOWTO/DNS-HOWTO-3.html
+128.9.0.107,nsroot,old
+
+# IANA Blackhole, e.g. NXDOMAIN
+# https://www.iana.org/help/abuse-answers
+# https://en.wikipedia.org/wiki/Blackhole_server
+192.175.48.6,iana,blackhole
+192.175.48.42,iana,blackhole
+192.175.48.1,iana,blackhole
+
+#
+# Norwegian public DNS
+# https://support.syse.eu/hc/no/articles/200690881-Navnetjenere-DNS-servere-for-norske-Internettleverand%C3%B8rer
+#
+
+# TDCNorge
+ns2.tele.dk,tdc
+ns3.tele.dk,tdc
+ns1-1.tdcnorge.no,tdc
+ns1-2.tdcnorge.no,tdc
+ns2-1.tdcnorge.no,tdc
+ns2-2.tdcnorge.no,tdc
+
+# Altibox
+dns-site-a.altibox.no,altibox
+dns-site-b.altibox.no,altibox
+
+# Telenor
+148.122.208,telenor
+148.122.161.3,telenor
+ns10.e.nsc.no,telenor
+ns11.e.nsc.no,telenor,canaldigital
+ns12.e.nsc.no,telenor,canaldigital
+ns13.e.nsc.no,telenor
+ns14.e.nsc.no,telenor
+ns15.e.nsc.no,telenor
+ns16.e.nsc.no,telenor
+ns17.e.nsc.no,telenor
+
+# NextGenTel
+dns03.nextgentel.net,nextgentel
+dns04.nextgentel.net,nextgentel
+dns05.nextgentel.net,nextgentel
+
+# Get
+dnscache01.get.no,get
+dnscache02.get.no,get
+
+# PowerTech
+ns1.powertech.no,powertech
+ns2.powertech.no,powertech
+
+# Broadnet
+193.75.75.75,broadnet
+193.75.75.193,broadnet
+
+# Uninett
+dns-resolver1.uninett.no,uninett
+dns-resolver2.uninett.no,uninett
+ns1.ihelse.net,uninett,ihelse
+ns2.ihelse.net,uninett,ihelse
+ns3.ihelse.net,uninett,ihelse
+
+# HelseNord
+ns1.helsenord.no,helsenord
+ns2.helsenord.no,helsenord
+ns3.helsenord.no,helsenord
+
+# BergenKommune
+ns1.bergen.kommune.no,bergenk
+ns2.bergen.kommune.no,bergenk
+ns3.bergen.kommune.no,bergenk
+
+# H-nett: http://www.venabygd.net/index.php/brukerveiledning/dns
+# http://www.h-nett.no/support/internett-og-telefoni
+194.19.2.11,hnett,venabygd
+194.19.3.11,hnett,venabygd
+
+# Norsk Helsenett
+nsx0.nhn.no,nhn
+nsx2.nhn.no,nhn
+nsx3.nhn.no,nhn
+
