@@ -33,7 +33,7 @@ jobs:
         run: . ./.venv/bin/activate && python main.py tld
 
       - name: Run public_dns
-          run: . ./.venv/bin/activate && python main.py public
+        run: . ./.venv/bin/activate && python main.py public
 
       - name: Release
         uses: fnkr/github-action-ghr@v1
