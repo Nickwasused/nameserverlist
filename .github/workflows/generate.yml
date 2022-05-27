@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
       - uses: actions/setup-python@v2
         with:
           python-version: "3.9.13"
@@ -61,7 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Release
-      uses: fnkr/github-action-ghr@v1
+    - uses: actions/checkout@v3
+    - uses: fnkr/github-action-ghr@v1
       env:
         GHR_PATH: json/
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
