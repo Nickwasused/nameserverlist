@@ -36,7 +36,7 @@ jobs:
         run: . ./.venv/bin/activate && python main.py public
 
       - name: Run public_suffix
-          run: . ./.venv/bin/activate && python main.py suffix
+        run: . ./.venv/bin/activate && python main.py suffix
 
       - name: Release
         uses: fnkr/github-action-ghr@v1
