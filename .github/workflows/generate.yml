@@ -14,13 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: download-file
-        - run: wget https://www.internic.net/domain/named.root -o named.root
+        run: wget https://www.internic.net/domain/named.root -o named.root
       - name: Cache File
-          id: cache-nsroot
-          uses: actions/cache@v3
-          with:
-            path: /json/nsroot.json
-            key: $(echo "shasum -a 256 named.root")
+        id: cache-nsroot
+        uses: actions/cache@v3
+        with:
+          path: /json/nsroot.json
+          key: $(echo "shasum -a 256 named.root")
       - uses: actions/setup-python@v3
         if: steps.cache-nsroot.outputs.cache-hit != 'true'
         with:
