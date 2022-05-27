@@ -79,6 +79,7 @@ def ns_tld():
     tld_data = request("https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
     tlds = []
     if tld_data is None:
+        logging.warning("Couldn`t fetch https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
         return None
     else:
         for line in tld_data.split('\n'):
@@ -93,6 +94,7 @@ def ns_tld():
 def ns_root():
     root_data = request("https://www.internic.net/domain/named.root")
     if root_data is None:
+        logging.warning("Couldn`t fetch https://www.internic.net/domain/named.root")
         return None
     else:
         root_servers = []
@@ -159,6 +161,7 @@ def ns_public_dns():
 def ns_public_suffix():
     public_suffix_data = request("https://publicsuffix.org/list/public_suffix_list.dat")
     if public_suffix_data is None:
+        logging.warning("Couldn`t fetch https://publicsuffix.org/list/public_suffix_list.dat")
         return None
     else:
         ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
