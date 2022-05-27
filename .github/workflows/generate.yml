@@ -36,7 +36,7 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run root
-        run: . ./.venv/bin/activate && python main.py root
+        run: python main.py root
         if: steps.cache-pip.outputs.cache-hit == 'true'
 
   build_tld:
@@ -50,7 +50,7 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run tld
-        run: . ./.venv/bin/activate && python main.py tld
+        run: python main.py tld
         if: steps.cache-pip.outputs.cache-hit == 'true'
 
   build_public_dns:
@@ -64,7 +64,7 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run public_dns
-        run: . ./.venv/bin/activate && python main.py public
+        run: python main.py public
         if: steps.cache-pip.outputs.cache-hit == 'true'
 
   build_suffix:
@@ -78,7 +78,7 @@ jobs:
           path: ~/.cache/pip
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run public_suffix
-        run: . ./.venv/bin/activate && python main.py suffix
+        run: python main.py suffix
         if: steps.cache-pip.outputs.cache-hit == 'true'
 
 
