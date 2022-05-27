@@ -13,14 +13,12 @@ jobs:
       - uses: actions/checkout@v3
       - name: download-file
         run: wget https://www.internic.net/domain/named.root -o named.root
-      - name: set hash
-        run: echo "CHECKSUM=$(shasum named.root | awk '{ print $1 }')" >> $GITHUB_ENV
       - name: Cache File
         id: cache-nsroot
         uses: actions/cache@v3
         with:
           path: json/nsroot.json
-          key: ${{ env.CHECKSUM }}
+          key: ${{ runner.os }}-${{ hashFiles('**/named.root') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - uses: actions/setup-python@v3
@@ -45,14 +43,12 @@ jobs:
       - uses: actions/checkout@v3
       - name: download-file
         run: wget https://data.iana.org/TLD/tlds-alpha-by-domain.txt -o tlds-alpha-by-domain.txt
-      - name: set hash
-        run: echo "CHECKSUM=$(shasum tlds-alpha-by-domain.txt | awk '{ print $1 }')" >> $GITHUB_ENV
       - name: Cache File
         id: cache-tld
         uses: actions/cache@v3
         with:
           path: json/nstld.json
-          key: ${{ env.CHECKSUM }}
+          key: ${{ runner.os }}-${{ hashFiles('**/tlds-alpha-by-domain.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - uses: actions/setup-python@v3
@@ -75,14 +71,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: set hash
-        run: echo "CHECKSUM=$(shasum public_dns.txt | awk '{ print $1 }')" >> $GITHUB_ENV
       - name: Cache File
         id: cache-public-dns
         uses: actions/cache@v3
         with:
           path: json/public_dns.json
-          key: ${{ env.CHECKSUM }}
+          key: ${{ runner.os }}-${{ hashFiles('**/public_dns.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - uses: actions/setup-python@v3
@@ -107,14 +101,12 @@ jobs:
       - uses: actions/checkout@v3
       - name: download-file
         run: wget https://publicsuffix.org/list/public_suffix_list.dat -o public_suffix_list.dat
-      - name: set hash
-        run: echo "CHECKSUM=$(shasum public_suffix_list.dat | awk '{ print $1 }')" >> $GITHUB_ENV
       - name: Cache File
         id: cache-suffix
         uses: actions/cache@v3
         with:
           path: json/nspublicsuffix.json
-          key: ${{ env.CHECKSUM }}
+          key: ${{ runner.os }}-${{ hashFiles('**/public_suffix_list.dat') }}
           restore-keys: |
             ${{ runner.os }}-pip-
       - uses: actions/setup-python@v3
