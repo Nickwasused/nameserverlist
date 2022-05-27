@@ -31,8 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run root
-        run: ls -la 
-             . ./.venv/bin/activate && python main.py root
+        run: ls -la && . ./.venv/bin/activate && python main.py root
 
   build_tld:
     needs: [setup]
