@@ -43,11 +43,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: download-file
+        run: wget https://data.iana.org/TLD/tlds-alpha-by-domain.txt -o tlds-alpha-by-domain.txt
+      - name: set hash
+        run: echo "CHECKSUM=$(shasum tlds-alpha-by-domain.txt | awk '{ print $1 }')" >> $GITHUB_ENV
+      - name: Cache File
+        id: cache-tld
+        uses: actions/cache@v3
+        with:
+          path: ./json/nstld.json
+          key: ${{ env.CHECKSUM }}
       - uses: actions/setup-python@v3
+        if: steps.cache-tld.outputs.cache-hit != 'true'
         with:
           python-version: "3.8.10"
           cache: 'pip'
       - name: Run tld
+        if: steps.cache-tld.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt && python main.py tld
       - name: Release
         uses: fnkr/github-action-ghr@v1
@@ -61,11 +73,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: set hash
+        run: echo "CHECKSUM=$(shasum public_dns.txt | awk '{ print $1 }')" >> $GITHUB_ENV
+      - name: Cache File
+        id: cache-public-dns
+        uses: actions/cache@v3
+        with:
+          path: ./json/public_dns.json
+          key: ${{ env.CHECKSUM }}
       - uses: actions/setup-python@v3
+        if: steps.cache-public-dns.outputs.cache-hit != 'true'
         with:
           python-version: "3.8.10"
           cache: 'pip'
       - name: Run public_dns
+        if: steps.cache-public-dns.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt && python main.py public
       - name: Release
         uses: fnkr/github-action-ghr@v1
@@ -79,11 +101,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: download-file
+        run: wget https://publicsuffix.org/list/public_suffix_list.dat -o public_suffix_list.dat
+          - name: set hash
+            run: echo "CHECKSUM=$(shasum public_suffix_list.dat | awk '{ print $1 }')" >> $GITHUB_ENV
+          - name: Cache File
+            id: cache-suffix
+            uses: actions/cache@v3
+            with:
+              path: ./json/nspublicsuffix.json
+              key: ${{ env.CHECKSUM }}
       - uses: actions/setup-python@v3
+        if: steps.cache-suffix.outputs.cache-hit != 'true'
         with:
           python-version: "3.8.10"
           cache: 'pip'
       - name: Run public_suffix
+        if: steps.cache-suffix.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt && python main.py suffix
       - name: Release
         uses: fnkr/github-action-ghr@v1
