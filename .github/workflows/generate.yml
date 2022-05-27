@@ -26,7 +26,7 @@ jobs:
 
 
   build_root:
-    needs: [setup]
+    needs: [install-requirements]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -40,7 +40,7 @@ jobs:
         if: steps.cache-venv.outputs.cache-hit == 'true'
 
   build_tld:
-    needs: [setup]
+    needs: [install-requirements]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -54,7 +54,7 @@ jobs:
         if: steps.cache-venv.outputs.cache-hit == 'true'
 
   build_public_dns:
-    needs: [setup]
+    needs: [install-requirements]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -68,7 +68,7 @@ jobs:
         if: steps.cache-venv.outputs.cache-hit == 'true'
 
   build_suffix:
-    needs: [setup]
+    needs: [install-requirements]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
