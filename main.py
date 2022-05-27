@@ -162,6 +162,7 @@ def ns_public_suffix():
             if line == "" or "//" in line:
                 continue
             else:
+                logging.info(f"Fetching tld: {line.lower()}")
                 try:
                     for ns_line in str(dns.resolver.resolve(line, 'ns').response).split('\n'):
                         suffix_match = re.match(public_suffix_regex, ns_line, re.MULTILINE)
@@ -178,12 +179,16 @@ def ns_public_suffix():
                                     })
 
                 except dns.resolver.NXDOMAIN:
+                    logging.error(f"Error while fetching tld: {line}")
                     continue
                 except dns.resolver.NoAnswer:
+                    logging.error(f"Error while fetching tld: {line}")
                     continue
                 except dns.resolver.LifetimeTimeout:
+                    logging.error(f"Error while fetching tld: {line}")
                     continue
                 except dns.resolver.NoNameservers:
+                    logging.error(f"Error while fetching tld: {line}")
                     continue
 
         print(public_suffix)
