@@ -102,17 +102,16 @@ def ns_root():
                 ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
                 fqdn = re.search(fqdn_regex, line, re.MULTILINE).group()
                 ip = re.search(ip_regex, line, re.MULTILINE).group()
-                json_object = {
+                root_servers.append({
                     "fqdn": fqdn,
                     "ip": ip,
                     "ns": "root"
-                }
-                root_servers.append(json_object)
+                })
 
         write_json("./json/nsroot.json", root_servers)
 
 
-def public_dns():
+def ns_public_dns():
     public_data = load_file("./public_dns.txt")
     public_result = []
     ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
@@ -140,16 +139,55 @@ def public_dns():
         except dns.resolver.NoAnswer:
             continue
 
-        result_item = {
+        public_result.append({
             "fqdn": fqdn,
             "ip": ip,
             "ns": "public",
             "tags": data
-        }
-
-        public_result.append(result_item)
+        })
 
     write_json("./json/public_dns.json", public_result)
+
+
+def ns_public_suffix():
+    public_suffix_data = request("https://publicsuffix.org/list/public_suffix_list.dat")
+    if public_suffix_data is None:
+        return None
+    else:
+        ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+        public_suffix_regex = r"^[a-zA-Z]{1,}\. [0-9]{1,} IN NS [a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
+        fqdn_regex = r"[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
+        public_suffix = []
+        for line in public_suffix_data.split('\n'):
+            if line == "" or "//" in line:
+                continue
+            else:
+                try:
+                    for ns_line in str(dns.resolver.resolve(line, 'ns').response).split('\n'):
+                        suffix_match = re.match(public_suffix_regex, ns_line, re.MULTILINE)
+                        if suffix_match:
+                            fqdn = re.search(fqdn_regex, ns_line, re.MULTILINE).group()
+                            for a_line in str(dns.resolver.resolve(fqdn, 'a').response).split('\n'):
+                                ip = re.search(ip_regex, a_line, re.MULTILINE)
+                                if ip is not None:
+                                    public_suffix.append({
+                                        "fqdn": fqdn,
+                                        "ip": ip.group(),
+                                        "ns": "tld",
+                                        "tld": line
+                                    })
+
+                except dns.resolver.NXDOMAIN:
+                    continue
+                except dns.resolver.NoAnswer:
+                    continue
+                except dns.resolver.LifetimeTimeout:
+                    continue
+                except dns.resolver.NoNameservers:
+                    continue
+
+        print(public_suffix)
+        write_json("./json/nspublicsuffix.json", public_suffix)
 
 
 if __name__ == "__main__":
@@ -157,7 +195,7 @@ if __name__ == "__main__":
     try:
         arguments[1]
     except IndexError:
-        logging.warning("Please define a action to use: root | tld")
+        logging.warning("Please define a action to use: root | tld | public | suffix")
         sys.exit()
 
     if arguments[1] == "root":
@@ -168,4 +206,7 @@ if __name__ == "__main__":
         ns_tld()
     elif arguments[1] == "public":
         logging.info("Fetching public dns servers")
-        public_dns()
+        ns_public_dns()
+    elif arguments[1] == "suffix":
+        logging.info("Fetching public suffix")
+        ns_public_suffix()

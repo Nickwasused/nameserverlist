@@ -3,13 +3,16 @@
 
 ```pip3 install -r requirements.txt```  
 ```python3 main.py tld```  
-```python3 main.py root```
+```python3 main.py root```  
+```python3 main.py public```  
+```python3 main.py suffix```  
 
 # Pregenrated files
 
 https://github.com/Nickwasused/nameserverlist/releases/latest/download/nsroot.json  
 https://github.com/Nickwasused/nameserverlist/releases/latest/download/nstld.json  
 https://github.com/Nickwasused/nameserverlist/releases/latest/download/public_dns.json  
+https://github.com/Nickwasused/nameserverlist/releases/latest/download/nspublicsuffix.json  
 
 # Results
 
