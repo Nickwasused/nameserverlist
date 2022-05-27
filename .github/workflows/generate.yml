@@ -103,14 +103,14 @@ jobs:
       - uses: actions/checkout@v3
       - name: download-file
         run: wget https://publicsuffix.org/list/public_suffix_list.dat -o public_suffix_list.dat
-          - name: set hash
-            run: echo "CHECKSUM=$(shasum public_suffix_list.dat | awk '{ print $1 }')" >> $GITHUB_ENV
-          - name: Cache File
-            id: cache-suffix
-            uses: actions/cache@v3
-            with:
-              path: ./json/nspublicsuffix.json
-              key: ${{ env.CHECKSUM }}
+      - name: set hash
+        run: echo "CHECKSUM=$(shasum public_suffix_list.dat | awk '{ print $1 }')" >> $GITHUB_ENV
+      - name: Cache File
+        id: cache-suffix
+        uses: actions/cache@v3
+        with:
+          path: ./json/nspublicsuffix.json
+          key: ${{ env.CHECKSUM }}
       - uses: actions/setup-python@v3
         if: steps.cache-suffix.outputs.cache-hit != 'true'
         with:
