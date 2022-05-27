@@ -40,7 +40,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-venv-
       - name: Run root
-        run: . ./.venv/bin/activate && python main.py root
+        run: ls -la &&  . ./.venv/bin/activate && python main.py root
 
   build_tld:
     needs: [setup]
