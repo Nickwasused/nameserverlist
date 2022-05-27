@@ -16,13 +16,11 @@ jobs:
         with:
           python-version: "3.9.13"
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: cache-venv
         with:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - run: python -m venv ./.venv && . ./.venv/bin/activate && pip install -r requirements.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
 
@@ -32,13 +30,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: cache-venv
         with:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run root
         run: . ./.venv/bin/activate && python main.py root
         if: steps.cache-venv.outputs.cache-hit == 'true'
@@ -48,13 +44,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: cache-venv
         with:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run tld
         run: . ./.venv/bin/activate && python main.py tld
         if: steps.cache-venv.outputs.cache-hit == 'true'
@@ -64,13 +58,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: cache-venv
         with:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run public_dns
         run: . ./.venv/bin/activate && python main.py public
         if: steps.cache-venv.outputs.cache-hit == 'true'
@@ -80,13 +72,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         id: cache-venv
         with:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run public_suffix
         run: . ./.venv/bin/activate && python main.py suffix
         if: steps.cache-venv.outputs.cache-hit == 'true'
