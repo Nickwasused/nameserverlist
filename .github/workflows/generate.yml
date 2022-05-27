@@ -17,7 +17,7 @@ jobs:
         id: cache-nsroot
         uses: actions/cache@v3
         with:
-          path: json/nsroot.json
+          path: .json/
           key: ${{ runner.os }}-${{ hashFiles('**/named.root') }}
           restore-keys: |
             ${{ runner.os }}-pip-
@@ -47,7 +47,7 @@ jobs:
         id: cache-tld
         uses: actions/cache@v3
         with:
-          path: json/nstld.json
+          path: .json/
           key: ${{ runner.os }}-${{ hashFiles('**/tlds-alpha-by-domain.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
@@ -75,7 +75,7 @@ jobs:
         id: cache-public-dns
         uses: actions/cache@v3
         with:
-          path: json/public_dns.json
+          path: .json/
           key: ${{ runner.os }}-${{ hashFiles('**/public_dns.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
@@ -105,7 +105,7 @@ jobs:
         id: cache-suffix
         uses: actions/cache@v3
         with:
-          path: json/nspublicsuffix.json
+          path: .json/
           key: ${{ runner.os }}-${{ hashFiles('**/public_suffix_list.dat') }}
           restore-keys: |
             ${{ runner.os }}-pip-
