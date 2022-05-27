@@ -116,6 +116,7 @@ def ns_public_dns():
     public_result = []
     ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
     for public_resolver in public_data.split('\n'):
+        logging.info(f"fetching resolver {public_resolver}")
         data = public_resolver.split(",")
         if len(data) == 1 or "#" in data[0]:
             continue
@@ -133,10 +134,16 @@ def ns_public_dns():
                     ip = search.group()
                     continue
         except dns.resolver.NXDOMAIN:
+            logging.info(f"Error while fetching resolver: {public_resolver}")
             continue
         except dns.resolver.NoNameservers:
+            logging.info(f"Error while fetching resolver: {public_resolver}")
             continue
         except dns.resolver.NoAnswer:
+            logging.info(f"Error while fetching resolver: {public_resolver}")
+            continue
+        except dns.resolver.LifetimeTimeout:
+            logging.info(f"Error while fetching resolver: {public_resolver}")
             continue
 
         public_result.append({
