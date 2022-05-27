@@ -40,7 +40,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-venv-
       - name: Run root
-        run: cd .venv && ls -la
+        run: . ./.venv/bin/activate && python main.py root
+        if: steps.cache-venv.outputs.cache-hit == 'true'
 
   build_tld:
     needs: [setup]
@@ -56,6 +57,7 @@ jobs:
             ${{ runner.os }}-venv-
       - name: Run tld
         run: . ./.venv/bin/activate && python main.py tld
+        if: steps.cache-venv.outputs.cache-hit == 'true'
 
   build_public_dns:
     needs: [setup]
@@ -71,6 +73,7 @@ jobs:
             ${{ runner.os }}-venv-
       - name: Run public_dns
         run: . ./.venv/bin/activate && python main.py public
+        if: steps.cache-venv.outputs.cache-hit == 'true'
 
   build_suffix:
     needs: [setup]
@@ -86,6 +89,7 @@ jobs:
             ${{ runner.os }}-venv-
       - name: Run public_suffix
         run: . ./.venv/bin/activate && python main.py suffix
+        if: steps.cache-venv.outputs.cache-hit == 'true'
 
 
   release:
