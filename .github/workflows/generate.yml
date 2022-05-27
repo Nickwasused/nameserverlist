@@ -21,6 +21,7 @@ jobs:
         with:
           path: ~/json/nsroot.json
           key: ${{ env.CHECKSUM }}
+          restore-keys: ${{ env.CHECKSUM }}
       - uses: actions/setup-python@v3
         if: steps.cache-nsroot.outputs.cache-hit != 'true'
         with:
@@ -51,6 +52,7 @@ jobs:
         with:
           path: ~/json/nstld.json
           key: ${{ env.CHECKSUM }}
+          restore-keys: ${{ env.CHECKSUM }}
       - uses: actions/setup-python@v3
         if: steps.cache-tld.outputs.cache-hit != 'true'
         with:
@@ -79,6 +81,7 @@ jobs:
         with:
           path: ~/json/public_dns.json
           key: ${{ env.CHECKSUM }}
+          restore-keys: ${{ env.CHECKSUM }}
       - uses: actions/setup-python@v3
         if: steps.cache-public-dns.outputs.cache-hit != 'true'
         with:
@@ -109,6 +112,7 @@ jobs:
         with:
           path: ~/json/nspublicsuffix.json
           key: ${{ env.CHECKSUM }}
+          restore-keys: ${{ env.CHECKSUM }}
       - uses: actions/setup-python@v3
         if: steps.cache-suffix.outputs.cache-hit != 'true'
         with:
