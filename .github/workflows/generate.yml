@@ -38,7 +38,7 @@ jobs:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
-            ${{ runner.os }}-venv-
+            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run root
         run: . ./.venv/bin/activate && python main.py root
         if: steps.cache-venv.outputs.cache-hit == 'true'
@@ -54,7 +54,7 @@ jobs:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
-            ${{ runner.os }}-venv-
+            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run tld
         run: . ./.venv/bin/activate && python main.py tld
         if: steps.cache-venv.outputs.cache-hit == 'true'
@@ -70,7 +70,7 @@ jobs:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
-            ${{ runner.os }}-venv-
+            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run public_dns
         run: . ./.venv/bin/activate && python main.py public
         if: steps.cache-venv.outputs.cache-hit == 'true'
@@ -86,7 +86,7 @@ jobs:
           path: ./.venv/
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
-            ${{ runner.os }}-venv-
+            ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
       - name: Run public_suffix
         run: . ./.venv/bin/activate && python main.py suffix
         if: steps.cache-venv.outputs.cache-hit == 'true'
