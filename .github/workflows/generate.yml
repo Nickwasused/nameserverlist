@@ -13,8 +13,11 @@ jobs:
       output1: ${{ steps.build_root.outputs.nsroot }}
     steps:
       - uses: actions/checkout@v3
-      - name: download-file && set hash
-        run: wget https://www.internic.net/domain/named.root -o named.root && echo CHECKSUM="$(shasum named.root | awk '{ print $1 }')" >> "$GITHUB_ENV"
+      - name: download-file
+        run: wget https://www.internic.net/domain/named.root -o named.root
+      - name: set hash
+        run: |
+           echo CHECKSUM="$(shasum named.root | awk '{ print $1 }')" >> "$GITHUB_ENV"
       - name: Cache File
         id: cache-nsroot
         uses: actions/cache@v3
