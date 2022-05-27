@@ -17,7 +17,7 @@ jobs:
         run: wget https://www.internic.net/domain/named.root -o named.root
       - name: set hash
         run: |
-           echo CHECKSUM="$(shasum named.root | awk '{ print $1 }')" >> "$GITHUB_ENV"
+          echo "::set-env name=CHECKSUM::$(shasum named.root | awk '{ print $1 }')"
       - name: Cache File
         id: cache-nsroot
         uses: actions/cache@v3
