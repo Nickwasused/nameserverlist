@@ -16,7 +16,7 @@ jobs:
           python-version: "3.8.10"
           cache: 'pip'
       - name: Run root
-        run: python main.py root
+        run: pip install -r requirements.txt && python main.py root
 
   build_tld:
     if: startsWith(github.ref, 'refs/tags/')
@@ -28,7 +28,7 @@ jobs:
           python-version: "3.8.10"
           cache: 'pip'
       - name: Run tld
-        run: python main.py tld
+        run: pip install -r requirements.txt && python main.py tld
 
   build_public_dns:
     if: startsWith(github.ref, 'refs/tags/')
@@ -40,7 +40,7 @@ jobs:
           python-version: "3.8.10"
           cache: 'pip'
       - name: Run public_dns
-        run: python main.py public
+        run: pip install -r requirements.txt && python main.py public
 
   build_suffix:
     if: startsWith(github.ref, 'refs/tags/')
@@ -52,7 +52,7 @@ jobs:
           python-version: "3.8.10"
           cache: 'pip'
       - name: Run public_suffix
-        run: python main.py suffix
+        run: pip install -r requirements.txt && python main.py suffix
 
   release:
     needs: [build_root, build_tld, build_public_dns, build_suffix]
