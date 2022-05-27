@@ -1,6 +1,6 @@
 name: Generate
 
-on:  
+on:
   push:
     tags:
       - '*'
@@ -26,42 +26,42 @@ jobs:
       - run: python -m venv ./.venv && . ./.venv/bin/activate && pip install -r requirements.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
 
-  - build_root:
+  build_root:
     needs: [setup]
     runs-on: ubuntu-latest
-      steps:
-          - uses: actions/checkout@v2
-          - name: Run root
-            run: . ./.venv/bin/activate && python main.py root
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run root
+        run: . ./.venv/bin/activate && python main.py root
 
-  - build_tld:
+  build_tld:
     needs: [setup]
     runs-on: ubuntu-latest
-      steps:
+    steps:
       - name: Run tld
         run: . ./.venv/bin/activate && python main.py tld
 
-  - build_public_dns:
+  build_public_dns:
     needs: [setup]
     runs-on: ubuntu-latest
-      steps:
-        - name: Run public_dns
-          run: . ./.venv/bin/activate && python main.py public
+    steps:
+      - name: Run public_dns
+        run: . ./.venv/bin/activate && python main.py public
 
-  - build_suffix:
+  build_suffix:
     needs: [setup]
     runs-on: ubuntu-latest
-      steps:
-        - name: Run public_suffix
-          run: . ./.venv/bin/activate && python main.py suffix
+    steps:
+      - name: Run public_suffix
+        run: . ./.venv/bin/activate && python main.py suffix
 
 
-  - release:
+  release:
     needs: [build_root, build_tld, build_public_dns, build_suffix]
     runs-on: ubuntu-latest
-      steps:
-      - name: Release
-        uses: fnkr/github-action-ghr@v1
-        env:
-          GHR_PATH: json/
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - name: Release
+      uses: fnkr/github-action-ghr@v1
+      env:
+        GHR_PATH: json/
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
