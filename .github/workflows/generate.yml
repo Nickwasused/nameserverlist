@@ -9,8 +9,6 @@ jobs:
   setup:
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
-    outputs:
-      venv: ./.venv
 
     steps:
       - uses: actions/checkout@v3
@@ -27,14 +25,22 @@ jobs:
             ${{ runner.os }}-venv-
       - run: python -m venv ./.venv && . ./.venv/bin/activate && pip install -r requirements.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
+      - uses: actions/upload-artifact@master
+        with:
+          name: venv
+          path: ./.venv
 
 
   build_root:
     needs: [setup]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: venv
+          path: ./.venv
       - name: Run root
-        run: ${{needs.setup.outputs.venv}}/bin/activate && python main.py root
+        run: . ./.venv/bin/activate && python main.py root
 
   build_tld:
     needs: [setup]
