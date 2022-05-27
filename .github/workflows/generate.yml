@@ -9,13 +9,25 @@ jobs:
   build_root:
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
+    outputs:
+      output1: ${{ steps.build_root.outputs.nsroot }}
     steps:
       - uses: actions/checkout@v3
+      - name: download-file
+        - run: wget https://www.internic.net/domain/named.root -o named.root
+      - name: Cache File
+          id: cache-nsroot
+          uses: actions/cache@v3
+          with:
+            path: /json/nsroot.json
+            key: $(echo "shasum -a 256 named.root")
       - uses: actions/setup-python@v3
+        if: steps.cache-nsroot.outputs.cache-hit != 'true'
         with:
           python-version: "3.8.10"
           cache: 'pip'
       - name: Run root
+        if: steps.cache-nsroot.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt && python main.py root
       - name: Release
         uses: fnkr/github-action-ghr@v1
