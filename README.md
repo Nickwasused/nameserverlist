@@ -8,7 +8,8 @@
 # Pregenrated files
 
 https://github.com/Nickwasused/nameserverlist/releases/latest/download/nsroot.json  
-https://github.com/Nickwasused/nameserverlist/releases/latest/download/nstld.json
+https://github.com/Nickwasused/nameserverlist/releases/latest/download/nstld.json  
+https://github.com/Nickwasused/nameserverlist/releases/latest/download/public_dns.json  
 
 # Results
 
