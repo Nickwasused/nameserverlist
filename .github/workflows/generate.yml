@@ -23,10 +23,11 @@ jobs:
           key: ${{ runner.os }}-venv-${{ hashFiles('**/requirements*.txt') }}
           restore-keys: |
             ${{ runner.os }}-venv-
+      outputs:
+        venv: ./.venv
       - run: python -m venv ./.venv && . ./.venv/bin/activate && pip install -r requirements.txt
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        outputs:
-          venv: ./.venv
+
 
   build_root:
     needs: [setup]
