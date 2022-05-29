@@ -28,7 +28,7 @@ jobs:
           cache: 'pip'
       - name: Run root
         if: steps.cache-nsroot.outputs.cache-hit != 'true'
-        run: pip install -r requirements.txt && python main.py root
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py root
       - name: Release
         uses: fnkr/github-action-ghr@v1
         env:
@@ -58,7 +58,7 @@ jobs:
           cache: 'pip'
       - name: Run tld
         if: steps.cache-tld.outputs.cache-hit != 'true'
-        run: pip install -r requirements.txt && python main.py tld
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py tld
       - name: Release
         uses: fnkr/github-action-ghr@v1
         env:
@@ -86,7 +86,7 @@ jobs:
           cache: 'pip'
       - name: Run public_dns
         if: steps.cache-public-dns.outputs.cache-hit != 'true'
-        run: pip install -r requirements.txt && python main.py public
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py public
       - name: Release
         uses: fnkr/github-action-ghr@v1
         env:
@@ -116,7 +116,7 @@ jobs:
           cache: 'pip'
       - name: Run public_suffix
         if: steps.cache-suffix.outputs.cache-hit != 'true'
-        run: pip install -r requirements.txt && python main.py suffix
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py suffix
       - name: Release
         uses: fnkr/github-action-ghr@v1
         env:
