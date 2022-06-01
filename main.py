@@ -13,8 +13,11 @@ import re
 logging.basicConfig(level=logging.INFO)
 logging.getLogger().setLevel(logging.INFO)
 
-num_cpus = cpu_count() * 2
-
+# num_cpus = cpu_count() * 2
+# let`s not do that! -> DOS yourself
+num_cpus = 1
+if cpu_count() != 1:
+    num_cpus = 2
 
 def write_json(file, data):
     with open(file, 'w') as f:
@@ -166,50 +169,53 @@ def ns_public_dns():
     write_json("./json/public_dns.json", public_result)
 
 
+def ns_public_suffix_worker(line):
+    ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+    public_suffix_regex = r"^[a-zA-Z]{1,}\. [0-9]{1,} IN NS [a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
+    fqdn_regex = r"[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
+
+    if line == "" or "//" in line:
+        return
+    else:
+        logging.info(f"Fetching tld: {line.lower()}")
+        try:
+            for ns_line in str(dns.resolver.resolve(line, 'ns').response).split('\n'):
+                suffix_match = re.match(public_suffix_regex, ns_line, re.MULTILINE)
+                if suffix_match:
+                    fqdn = re.search(fqdn_regex, ns_line, re.MULTILINE).group()
+                    for a_line in str(dns.resolver.resolve(fqdn, 'a').response).split('\n'):
+                        ip = re.search(ip_regex, a_line, re.MULTILINE)
+                        if ip is not None:
+                            return {
+                                "fqdn": fqdn,
+                                "ip": ip.group(),
+                                "ns": "tld",
+                                "tld": line
+                            }
+
+        except dns.resolver.NXDOMAIN:
+            logging.error(f"Error while fetching tld: {line}")
+            return
+        except dns.resolver.NoAnswer:
+            logging.error(f"Error while fetching tld: {line}")
+            return
+        except dns.resolver.LifetimeTimeout:
+            logging.error(f"Error while fetching tld: {line}")
+            return
+        except dns.resolver.NoNameservers:
+            logging.error(f"Error while fetching tld: {line}")
+            return
+
 def ns_public_suffix():
     public_suffix_data = request("https://publicsuffix.org/list/public_suffix_list.dat")
     if public_suffix_data is None:
         logging.warning("Couldn`t fetch https://publicsuffix.org/list/public_suffix_list.dat")
         return None
     else:
-        ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
-        public_suffix_regex = r"^[a-zA-Z]{1,}\. [0-9]{1,} IN NS [a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
-        fqdn_regex = r"[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
-        public_suffix = []
-        for line in public_suffix_data.split('\n'):
-            if line == "" or "//" in line:
-                continue
-            else:
-                logging.info(f"Fetching tld: {line.lower()}")
-                try:
-                    for ns_line in str(dns.resolver.resolve(line, 'ns').response).split('\n'):
-                        suffix_match = re.match(public_suffix_regex, ns_line, re.MULTILINE)
-                        if suffix_match:
-                            fqdn = re.search(fqdn_regex, ns_line, re.MULTILINE).group()
-                            for a_line in str(dns.resolver.resolve(fqdn, 'a').response).split('\n'):
-                                ip = re.search(ip_regex, a_line, re.MULTILINE)
-                                if ip is not None:
-                                    public_suffix.append({
-                                        "fqdn": fqdn,
-                                        "ip": ip.group(),
-                                        "ns": "tld",
-                                        "tld": line
-                                    })
-
-                except dns.resolver.NXDOMAIN:
-                    logging.error(f"Error while fetching tld: {line}")
-                    continue
-                except dns.resolver.NoAnswer:
-                    logging.error(f"Error while fetching tld: {line}")
-                    continue
-                except dns.resolver.LifetimeTimeout:
-                    logging.error(f"Error while fetching tld: {line}")
-                    continue
-                except dns.resolver.NoNameservers:
-                    logging.error(f"Error while fetching tld: {line}")
-                    continue
-
-        print(public_suffix)
+        pool = Pool(num_cpus)
+        public_suffix = pool.map(ns_public_suffix_worker, public_suffix_data.split('\n'))
+        # remove None values from list
+        public_suffix = [i for i in public_suffix if i]
         write_json("./json/nspublicsuffix.json", public_suffix)
 
 
