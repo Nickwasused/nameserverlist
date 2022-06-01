@@ -243,6 +243,8 @@ if __name__ == "__main__":
     except IndexError:
         pass
 
+    num_cpus = int(num_cpus)
+
     logging.info(f"Using {num_cpus} threads.")
 
     if arguments[1] == "root":
