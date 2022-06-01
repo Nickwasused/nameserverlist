@@ -1,6 +1,7 @@
 #!/bin/python3
 
 from urllib.request import urlopen, Request
+from multiprocessing import Pool, cpu_count
 from json import dump
 import dns.resolver
 import logging
@@ -11,6 +12,8 @@ import re
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger().setLevel(logging.INFO)
+
+num_cpus = cpu_count() * 2
 
 
 def write_json(file, data):
@@ -91,69 +94,74 @@ def ns_tld():
     write_json("./json/nstld.json", tlds)
 
 
+def ns_root_worker(line):
+    if " A " in line:
+        fqdn_regex = r"^[A-Z]\.[A-Z-]{1,}\.(NET)"
+        ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+        fqdn = re.search(fqdn_regex, line, re.MULTILINE).group()
+        ip = re.search(ip_regex, line, re.MULTILINE).group()
+        return {
+            "fqdn": fqdn,
+            "ip": ip,
+            "ns": "root"
+        }
+
+
 def ns_root():
     root_data = request("https://www.internic.net/domain/named.root")
     if root_data is None:
         logging.warning("Couldn`t fetch https://www.internic.net/domain/named.root")
         return None
     else:
-        root_servers = []
-        for line in root_data.split('\n'):
-            if " A " in line:
-                fqdn_regex = r"^[A-Z]\.[A-Z-]{1,}\.(NET)"
-                ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
-                fqdn = re.search(fqdn_regex, line, re.MULTILINE).group()
-                ip = re.search(ip_regex, line, re.MULTILINE).group()
-                root_servers.append({
-                    "fqdn": fqdn,
-                    "ip": ip,
-                    "ns": "root"
-                })
-
+        pool = Pool(num_cpus)
+        root_servers = pool.map(ns_root_worker, root_data.split('\n'))
+        # remove None values from list
+        root_servers = [i for i in root_servers if i]
         write_json("./json/nsroot.json", root_servers)
+
+
+def ns_public_dns_worker(public_resolver):
+    ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
+    data = public_resolver.split(",")
+    if len(data) == 1 or "#" in data[0]:
+        return
+
+    fqdn = ""
+    if not re.search(ip_regex, data[0], re.MULTILINE):
+        fqdn = data[0]
+
+    data = data.pop()
+
+    try:
+        for line in str(dns.resolver.resolve(fqdn, 'A').response).split('\n'):
+            search = re.search(ip_regex, line, re.MULTILINE)
+            if search is not None:
+                return {
+                    "fqdn": fqdn,
+                    "ip": search.group(),
+                    "ns": "public",
+                    "tags": data
+                }
+    except dns.resolver.NXDOMAIN:
+        logging.info(f"Error while fetching resolver: {public_resolver}")
+        return
+    except dns.resolver.NoNameservers:
+        logging.info(f"Error while fetching resolver: {public_resolver}")
+        return
+    except dns.resolver.NoAnswer:
+        logging.info(f"Error while fetching resolver: {public_resolver}")
+        return
+    except dns.resolver.LifetimeTimeout:
+        logging.info(f"Error while fetching resolver: {public_resolver}")
+        return
 
 
 def ns_public_dns():
     public_data = load_file("./public_dns.txt")
-    public_result = []
-    ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
-    for public_resolver in public_data.split('\n'):
-        logging.info(f"fetching resolver {public_resolver}")
-        data = public_resolver.split(",")
-        if len(data) == 1 or "#" in data[0]:
-            continue
-        fqdn = ""
-        if not re.search(ip_regex, data[0], re.MULTILINE):
-            fqdn = data[0]
-
-        data = data.pop()
-
-        ip = ""
-        try:
-            for line in str(dns.resolver.resolve(fqdn, 'A').response).split('\n'):
-                search = re.search(ip_regex, line, re.MULTILINE)
-                if search is not None:
-                    ip = search.group()
-                    continue
-        except dns.resolver.NXDOMAIN:
-            logging.info(f"Error while fetching resolver: {public_resolver}")
-            continue
-        except dns.resolver.NoNameservers:
-            logging.info(f"Error while fetching resolver: {public_resolver}")
-            continue
-        except dns.resolver.NoAnswer:
-            logging.info(f"Error while fetching resolver: {public_resolver}")
-            continue
-        except dns.resolver.LifetimeTimeout:
-            logging.info(f"Error while fetching resolver: {public_resolver}")
-            continue
-
-        public_result.append({
-            "fqdn": fqdn,
-            "ip": ip,
-            "ns": "public",
-            "tags": data
-        })
+    pool = Pool(num_cpus)
+    public_result = pool.map(ns_public_dns_worker, public_data.split('\n'))
+    # remove None values from list
+    public_result = [i for i in public_result if i]
 
     write_json("./json/public_dns.json", public_result)
 
