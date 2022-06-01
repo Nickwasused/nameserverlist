@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Get number of CPU cores
-          uses: SimenB/github-actions-cpu-cores@v1
-          id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v1
+        id: cpu-cores
       - name: download-file
         run: wget https://www.internic.net/domain/named.root -o named.root
       - name: Cache File
@@ -45,8 +45,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Get number of CPU cores
-          uses: SimenB/github-actions-cpu-cores@v1
-          id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v1
+        id: cpu-cores
       - name: download-file
         run: wget https://data.iana.org/TLD/tlds-alpha-by-domain.txt -o tlds-alpha-by-domain.txt
       - name: Cache File
@@ -78,8 +78,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Get number of CPU cores
-          uses: SimenB/github-actions-cpu-cores@v1
-          id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v1
+        id: cpu-cores
       - name: Cache File
         id: cache-public-dns
         uses: actions/cache@v3
@@ -109,8 +109,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Get number of CPU cores
-          uses: SimenB/github-actions-cpu-cores@v1
-          id: cpu-cores
+        uses: SimenB/github-actions-cpu-cores@v1
+        id: cpu-cores
       - name: download-file
         run: wget https://publicsuffix.org/list/public_suffix_list.dat -o public_suffix_list.dat
       - name: Cache File
