@@ -15,9 +15,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 # num_cpus = cpu_count() * 2
 # let`s not do that! -> DOS yourself
-num_cpus = 1
-if cpu_count() != 1:
-    num_cpus = 2
+num_cpus = 4
 
 def write_json(file, data):
     with open(file, 'w') as f:
