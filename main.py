@@ -218,12 +218,32 @@ def ns_public_suffix():
 
 
 if __name__ == "__main__":
+    actions = ["root", "tld", "public", "suffix"]
     arguments = sys.argv
     try:
         arguments[1]
+        if arguments[1] not in actions:
+            logging.warning("Please define a action to use: root | tld | public | suffix")
+            sys.exit()
     except IndexError:
         logging.warning("Please define a action to use: root | tld | public | suffix")
         sys.exit()
+
+    try:
+        num_cpus = arguments[2]
+    except IndexError:
+        pass
+
+    try:
+        if arguments[1] not in actions:
+            try:
+                num_cpus = arguments[1]
+            except IndexError:
+                pass
+    except IndexError:
+        pass
+
+    logging.info(f"Using {num_cpus} threads.")
 
     if arguments[1] == "root":
         logging.info("Fetching root servers")

@@ -11,6 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Get number of CPU cores
+          uses: SimenB/github-actions-cpu-cores@v1
+          id: cpu-cores
       - name: download-file
         run: wget https://www.internic.net/domain/named.root -o named.root
       - name: Cache File
@@ -28,7 +31,7 @@ jobs:
           cache: 'pip'
       - name: Run root
         if: steps.cache-nsroot.outputs.cache-hit != 'true'
-        run: pip --disable-pip-version-check install -r requirements.txt && python main.py root
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py root ${{ steps.cpu-cores.outputs.count }}
       - name: Release
         uses: fnkr/github-action-ghr@v1
         env:
@@ -41,6 +44,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Get number of CPU cores
+          uses: SimenB/github-actions-cpu-cores@v1
+          id: cpu-cores
       - name: download-file
         run: wget https://data.iana.org/TLD/tlds-alpha-by-domain.txt -o tlds-alpha-by-domain.txt
       - name: Cache File
@@ -58,7 +64,7 @@ jobs:
           cache: 'pip'
       - name: Run tld
         if: steps.cache-tld.outputs.cache-hit != 'true'
-        run: pip --disable-pip-version-check install -r requirements.txt && python main.py tld
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py tld ${{ steps.cpu-cores.outputs.count }}
       - name: Release
         uses: fnkr/github-action-ghr@v1
         env:
@@ -71,6 +77,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Get number of CPU cores
+          uses: SimenB/github-actions-cpu-cores@v1
+          id: cpu-cores
       - name: Cache File
         id: cache-public-dns
         uses: actions/cache@v3
@@ -86,7 +95,7 @@ jobs:
           cache: 'pip'
       - name: Run public_dns
         if: steps.cache-public-dns.outputs.cache-hit != 'true'
-        run: pip --disable-pip-version-check install -r requirements.txt && python main.py public
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py public ${{ steps.cpu-cores.outputs.count }}
       - name: Release
         uses: fnkr/github-action-ghr@v1
         env:
@@ -99,6 +108,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Get number of CPU cores
+          uses: SimenB/github-actions-cpu-cores@v1
+          id: cpu-cores
       - name: download-file
         run: wget https://publicsuffix.org/list/public_suffix_list.dat -o public_suffix_list.dat
       - name: Cache File
@@ -116,7 +128,7 @@ jobs:
           cache: 'pip'
       - name: Run public_suffix
         if: steps.cache-suffix.outputs.cache-hit != 'true'
-        run: pip --disable-pip-version-check install -r requirements.txt && python main.py suffix
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py suffix ${{ steps.cpu-cores.outputs.count }}
       - name: Release
         uses: fnkr/github-action-ghr@v1
         env:
