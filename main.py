@@ -62,11 +62,12 @@ def ns_tld_worker(tld):
                     continue
                 else:
                     entry_ip = entry_ip.group()
+                    entry_domain = domain.group()
                     # replace the last dot e.g. "ns1.dns.nic.aaa." to "ns1.dns.nic.aaa"
-                    rdata = rdata[::-1].replace(".", "", 1)
-                    rdata = rdata[::-1]
+                    entry_domain = entry_domain[::-1].replace(".", "", 1)
+                    entry_domain = entry_domain[::-1]
                     tld_data.append({
-                        "fqdn": rdata,
+                        "fqdn": entry_domain,
                         "ip": entry_ip,
                         "ns": "tld",
                         "tld": tld
