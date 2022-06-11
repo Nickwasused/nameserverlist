@@ -45,13 +45,14 @@ def request(url):
         return None
 
 
-def dig_tld(tld):
+def ns_tld_worker(tld):
+    # logging.info(f"Fetching tld {tld}")
     ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
     fqdn_regex = r"[a-zA-Z0-9-.]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
     tld_data = []
     try:
         for rdata in str(dns.resolver.resolve(tld, 'ns').response).split('\n'):
-            domain = re.search(fqdn_regex, fqdn_regex, re.MULTILINE)
+            domain = re.search(fqdn_regex, rdata, re.MULTILINE)
             if domain is None:
                 continue
             else:
@@ -70,6 +71,8 @@ def dig_tld(tld):
                         "ns": "tld",
                         "tld": tld
                     })
+
+        return tld_data
     except dns.resolver.NoNameservers:
         logging.error(f"Error (NoNameservers) while fetching tld: {tld}")
         return []
@@ -83,23 +86,18 @@ def dig_tld(tld):
         logging.error(f"Error (NXDOMAIN) while fetching tld: {tld}")
         return []
 
-    return tld_data
-
 
 def ns_tld():
     tld_data = request("https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
-    tlds = []
     if tld_data is None:
         logging.warning("Couldn`t fetch https://data.iana.org/TLD/tlds-alpha-by-domain.txt")
         return None
     else:
-        for line in tld_data.split('\n'):
-            if "#" in line or line == "":
-                continue
-            logging.info(f"Fetching tld: {line.lower()}")
-            tlds = tlds + dig_tld(line.lower())
-
-    write_json("./json/nstld.json", tlds)
+        pool = Pool(num_cpus)
+        tlds = pool.map(ns_tld_worker, tld_data.split('\n'))
+        # remove None values from list
+        tlds = [i for i in tlds if i]
+        write_json("./json/nstld.json", tlds)
 
 
 def ns_root_worker(line):
