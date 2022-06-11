@@ -6,6 +6,7 @@
 ```python3 main.py root```  
 ```python3 main.py public```  
 ```python3 main.py suffix```  
+```python3 main.py domains```  
 
 # Pregenrated files
 
@@ -13,6 +14,7 @@ https://github.com/Nickwasused/nameserverlist/releases/latest/download/nsroot.js
 https://github.com/Nickwasused/nameserverlist/releases/latest/download/nstld.json  
 https://github.com/Nickwasused/nameserverlist/releases/latest/download/public_dns.json  
 https://github.com/Nickwasused/nameserverlist/releases/latest/download/nspublicsuffix.json  
+https://github.com/Nickwasused/nameserverlist/releases/latest/download/nsdomains.json
 
 # Results
 

@@ -17,6 +17,7 @@ logging.getLogger().setLevel(logging.INFO)
 # let`s not do that! -> DOS yourself
 num_cpus = 4
 
+
 def write_json(file, data):
     with open(file, 'w') as f:
         dump(data, f, indent=4)
@@ -48,21 +49,19 @@ def dig_tld(tld):
     ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
     tld_data = []
     try:
-        for rdata in dns.resolver.resolve(tld, 'ns'):
-            data = str(rdata).split('\n')
-            for entry in data:
-                dns_query = str(dns.resolver.resolve(entry, 'A').response)
-                entry_ip = re.search(ip_regex, dns_query, re.MULTILINE).group()
+        for rdata in str(dns.resolver.resolve(tld, 'ns')).split('\n'):
+            dns_query = str(dns.resolver.resolve(rdata, 'a').response)
+            entry_ip = re.search(ip_regex, dns_query, re.MULTILINE).group()
 
-                # replace the last dot e.g. "ns1.dns.nic.aaa." to "ns1.dns.nic.aaa"
-                entry = entry[::-1].replace(".", "", 1)
-                entry = entry[::-1]
-                tld_data.append({
-                    "fqdn": entry,
-                    "ip": entry_ip,
-                    "ns": "tld",
-                    "tld": tld
-                })
+            # replace the last dot e.g. "ns1.dns.nic.aaa." to "ns1.dns.nic.aaa"
+            rdata = rdata[::-1].replace(".", "", 1)
+            rdata = rdata[::-1]
+            tld_data.append({
+                "fqdn": rdata,
+                "ip": entry_ip,
+                "ns": "tld",
+                "tld": tld
+            })
     except dns.resolver.NoNameservers:
         logging.error(f"Error while fetching tld: {tld}")
         return []
@@ -204,6 +203,7 @@ def ns_public_suffix_worker(line):
             logging.error(f"Error while fetching tld: {line}")
             return
 
+
 def ns_public_suffix():
     public_suffix_data = request("https://publicsuffix.org/list/public_suffix_list.dat")
     if public_suffix_data is None:
@@ -217,16 +217,77 @@ def ns_public_suffix():
         write_json("./json/nspublicsuffix.json", public_suffix)
 
 
+def ns_domains_worker(line):
+    ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+    fqdn_regex = r"[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
+    ips = []
+    return_data = []
+
+    if line == "" or "//" in line:
+        return
+    else:
+        logging.info(f"Fetching domain: {line.lower()}")
+        try:
+            for ns_line in str(dns.resolver.resolve(line, 'ns').response).split('\n'):
+                fqdn = re.search(fqdn_regex, ns_line, re.MULTILINE)
+                if fqdn is None:
+                    continue
+                else:
+                    fqdn = fqdn.group()
+                    for a_line in str(dns.resolver.resolve(fqdn, 'a').response).split('\n'):
+                        ip = re.search(ip_regex, a_line, re.MULTILINE)
+                        if ip is None:
+                            continue
+                        else:
+                            ips.append(ip.group())
+
+                for ip in ips:
+                    return_data.append({
+                        "fqdn": fqdn,
+                        "ip": ip,
+                        "ns": "domain",
+                        "domain": line
+                    })
+
+            return return_data
+
+        except dns.resolver.NXDOMAIN:
+            logging.error(f"Error (NXDOMAIN) while fetching domain: {line}")
+            return
+        except dns.resolver.NoAnswer:
+            logging.error(f"Error (NoAnswer) while fetching domain: {line}")
+            return
+        except dns.resolver.LifetimeTimeout:
+            logging.error(f"Error (LifetimeTimeout) while fetching domain: {line}")
+            return
+        except dns.resolver.NoNameservers:
+            logging.error(f"Error (NoNameservers) while fetching domain: {line}")
+            return
+
+
+def ns_domains():
+    domain_data = load_file("./domains.txt")
+    if domain_data is None:
+        logging.warning("Couldn`t load domains.txt")
+        return None
+    else:
+        pool = Pool(num_cpus)
+        domains_data_dns = pool.map(ns_domains_worker, domain_data.split('\n'))
+        # remove None values from list
+        domains_data_dns = [i for i in domains_data_dns if i]
+        write_json("./json/nsdomains.json", domains_data_dns)
+
+
 if __name__ == "__main__":
-    actions = ["root", "tld", "public", "suffix"]
+    actions = ["root", "tld", "public", "suffix", "domains"]
     arguments = sys.argv
     try:
         arguments[1]
         if arguments[1] not in actions:
-            logging.warning("Please define a action to use: root | tld | public | suffix")
+            logging.warning("Please define a action to use: root | tld | public | suffix | domains")
             sys.exit()
     except IndexError:
-        logging.warning("Please define a action to use: root | tld | public | suffix")
+        logging.warning("Please define a action to use: root | tld | public | suffix | domains")
         sys.exit()
 
     try:
@@ -259,3 +320,6 @@ if __name__ == "__main__":
     elif arguments[1] == "suffix":
         logging.info("Fetching public suffix")
         ns_public_suffix()
+    elif arguments[1] == "domains":
+        logging.info("Fetching domains")
+        ns_domains()

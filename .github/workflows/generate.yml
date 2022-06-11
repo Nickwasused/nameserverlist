@@ -134,3 +134,33 @@ jobs:
         env:
           GHR_PATH: json/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build_domains:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Get number of CPU cores
+        uses: SimenB/github-actions-cpu-cores@v1
+        id: cpu-cores
+      - name: Cache File
+        id: cache-domains
+        uses: actions/cache@v3
+        with:
+          path: .json/
+          key: ${{ runner.os }}-${{ hashFiles('**/domains.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - uses: actions/setup-python@v3
+        if: steps.cache-suffix.outputs.cache-hit != 'true'
+        with:
+          python-version: "3.8.10"
+          cache: 'pip'
+      - name: Run domains
+        if: steps.cache-domains.outputs.cache-hit != 'true'
+        run: pip --disable-pip-version-check install -r requirements.txt && python main.py domains ${{ steps.cpu-cores.outputs.count }}
+      - name: Release
+        uses: fnkr/github-action-ghr@v1
+        env:
+          GHR_PATH: json/
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
