@@ -51,17 +51,20 @@ def dig_tld(tld):
     try:
         for rdata in str(dns.resolver.resolve(tld, 'ns')).split('\n'):
             dns_query = str(dns.resolver.resolve(rdata, 'a').response)
-            entry_ip = re.search(ip_regex, dns_query, re.MULTILINE).group()
-
-            # replace the last dot e.g. "ns1.dns.nic.aaa." to "ns1.dns.nic.aaa"
-            rdata = rdata[::-1].replace(".", "", 1)
-            rdata = rdata[::-1]
-            tld_data.append({
-                "fqdn": rdata,
-                "ip": entry_ip,
-                "ns": "tld",
-                "tld": tld
-            })
+            entry_ip = re.search(ip_regex, dns_query, re.MULTILINE)
+            if entry_ip is None:
+                continue
+            else:
+                entry_ip = entry_ip.group()
+                # replace the last dot e.g. "ns1.dns.nic.aaa." to "ns1.dns.nic.aaa"
+                rdata = rdata[::-1].replace(".", "", 1)
+                rdata = rdata[::-1]
+                tld_data.append({
+                    "fqdn": rdata,
+                    "ip": entry_ip,
+                    "ns": "tld",
+                    "tld": tld
+                })
     except dns.resolver.NoNameservers:
         logging.error(f"Error while fetching tld: {tld}")
         return []
