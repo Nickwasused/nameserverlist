@@ -47,35 +47,40 @@ def request(url):
 
 def dig_tld(tld):
     ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])"
+    fqdn_regex = r"[a-zA-Z0-9-.]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
     tld_data = []
     try:
-        for rdata in str(dns.resolver.resolve(tld, 'ns')).split('\n'):
-            dns_query = str(dns.resolver.resolve(rdata, 'a').response)
-            entry_ip = re.search(ip_regex, dns_query, re.MULTILINE)
-            if entry_ip is None:
+        for rdata in str(dns.resolver.resolve(tld, 'ns').response).split('\n'):
+            domain = re.search(fqdn_regex, fqdn_regex, re.MULTILINE)
+            if domain is None:
                 continue
             else:
-                entry_ip = entry_ip.group()
-                # replace the last dot e.g. "ns1.dns.nic.aaa." to "ns1.dns.nic.aaa"
-                rdata = rdata[::-1].replace(".", "", 1)
-                rdata = rdata[::-1]
-                tld_data.append({
-                    "fqdn": rdata,
-                    "ip": entry_ip,
-                    "ns": "tld",
-                    "tld": tld
-                })
+                dns_query = str(dns.resolver.resolve(domain.group(), 'a').response)
+                entry_ip = re.search(ip_regex, dns_query, re.MULTILINE)
+                if entry_ip is None:
+                    continue
+                else:
+                    entry_ip = entry_ip.group()
+                    # replace the last dot e.g. "ns1.dns.nic.aaa." to "ns1.dns.nic.aaa"
+                    rdata = rdata[::-1].replace(".", "", 1)
+                    rdata = rdata[::-1]
+                    tld_data.append({
+                        "fqdn": rdata,
+                        "ip": entry_ip,
+                        "ns": "tld",
+                        "tld": tld
+                    })
     except dns.resolver.NoNameservers:
-        logging.error(f"Error while fetching tld: {tld}")
+        logging.error(f"Error (NoNameservers) while fetching tld: {tld}")
         return []
     except dns.resolver.NoAnswer:
-        logging.error(f"Error while fetching tld: {tld}")
+        logging.error(f"Error (NoAnswer) while fetching tld: {tld}")
         return []
     except dns.resolver.LifetimeTimeout:
-        logging.error(f"Error while fetching tld: {tld}")
+        logging.error(f"Error (LifetimeTimeout) while fetching tld: {tld}")
         return []
     except dns.resolver.NXDOMAIN:
-        logging.error(f"Error while fetching tld: {tld}")
+        logging.error(f"Error (NXDOMAIN) while fetching tld: {tld}")
         return []
 
     return tld_data
@@ -172,7 +177,7 @@ def ns_public_dns():
 def ns_public_suffix_worker(line):
     ip_regex = r"(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
     public_suffix_regex = r"^[a-zA-Z]{1,}\. [0-9]{1,} IN NS [a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
-    fqdn_regex = r"[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
+    fqdn_regex = r"[a-zA-Z0-9-.]{1,}\.[a-zA-Z0-9]{1,}\.[a-zA-Z0-9]{1,}\.$"
 
     if line == "" or "//" in line:
         return
