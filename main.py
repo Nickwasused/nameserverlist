@@ -161,10 +161,7 @@ def ns_public_dns():
     public_result = pool.map(ns_public_dns_worker, public_data.split('\n'))
     # remove None values from list
     public_result = [i for i in public_result if i]
-    write_dns = []
-    for list_item in public_result:
-        write_dns += list_item
-    write_json("./json/public_dns.json", write_dns)
+    write_json("./json/public_dns.json", public_result)
 
 
 def ns_public_suffix_worker(line):
@@ -211,10 +208,7 @@ def ns_public_suffix():
         public_suffix = pool.map(ns_public_suffix_worker, public_suffix_data.split('\n'))
         # remove None values from list
         public_suffix = [i for i in public_suffix if i]
-        write_suffix = []
-        for list_item in public_suffix:
-            write_suffix += list_item
-        write_json("./json/nspublicsuffix.json", write_suffix)
+        write_json("./json/nspublicsuffix.json", public_suffix)
 
 
 def ns_domains_worker(line):
