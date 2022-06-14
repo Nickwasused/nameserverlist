@@ -60,7 +60,7 @@ def ns_tld_worker(tld):
                     "fqdn": entry,
                     "ip": ip,
                     "ns": "tld",
-                    "tld": "de"
+                    "tld": tld
                 })
 
         return tld_data
